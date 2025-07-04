@@ -1,0 +1,8 @@
+# intellj
+.idea
+
+# .env
+.env
+
+# dependencies
+node_modules

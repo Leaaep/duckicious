@@ -1,0 +1,13 @@
+{
+  "name": "duckicious",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:server": "npm run dev --workspace apps/server",
+    "build:db": "npm run genDB --workspace apps/server && npm run pushDB --workspace apps/server",
+    "dev:client": "npm run dev:bun --workspace apps/client"
+  },
+  "workspaces": ["apps/server", "apps/client"],
+  "license": "ISC",
+  "type": "commonjs"
+}
