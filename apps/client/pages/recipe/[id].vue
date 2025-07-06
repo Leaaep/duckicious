@@ -1,32 +1,35 @@
 <script setup lang="ts">
 import {navigateTo} from "nuxt/app";
 
-const toast = useToast()
+const toast = useToast();
 definePageMeta({
   layout: 'recipe'
-})
+});
 
-const route = useRoute()
-const id = route.params.id
+const route = useRoute();
+const id = route.params.id;
 
-const {data: recipe} = await useAsyncData('recipe',
-    () => $fetch(`http://localhost:4000/api/recipe/${id}`, {
-      credentials: 'include',
-      onResponseError: (error) => {
-        if (error.response?.status === 401) {
-          navigateTo('/login')
-        } else {
-          toast.add({title: 'Error', description: 'An error occurred: ' + error.response.status, color: 'error'})
-        }
-      }
-    }))
-
+const {data: recipe} = await useFetch(() => `http://localhost:4000/api/recipe/${id}`, {
+  credentials: 'include',
+  server: false,
+  onResponseError: (error) => {
+    if (error.response?.status === 401) {
+      navigateTo('/login');
+    } else {
+      toast.add({
+        title: 'Error',
+        description: 'An error occurred: ' + error.response.status,
+        color: 'error'
+      });
+    }
+  }
+});
 </script>
 
 <template>
   <UCard>
     <template #header>
-      <EditRecipeDialog />
+      <EditRecipeDialog/>
       <p class="text-3xl text-center">{{ recipe.title }}</p>
       <p class="text-center">{{ recipe.description }}</p>
     </template>
