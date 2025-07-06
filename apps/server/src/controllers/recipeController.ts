@@ -120,7 +120,7 @@ export const recipeController = new Elysia({prefix: '/recipe'})
             return status(500, 'Internal Server Error: ' + e?.toString())
         }
     }, {
-        query: t.ObjectString({
+        query: t.Object({
             url: t.String()
         }),
         async beforeHandle({cookie: {account}, status, jwt}) {

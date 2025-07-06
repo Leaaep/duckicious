@@ -1,21 +1,30 @@
 <script setup lang="ts">
+import {navigateTo} from "nuxt/app";
+
 const toast = useToast()
 const open = ref(false)
 const url = ref<string>('')
 
 const importRecipe = async () => {
   if (url.value) {
-    const {error, status} = await useFetch(`http://localhost:4000/api/recipe/import?url=${url.value}`, {
+    await useFetch(`http://localhost:4000/api/recipe/import?url=${url.value}`, {
       method: 'get',
       server: false,
+      credentials: 'include',
+      onResponseError: (error) => {
+        if (error.response?.status === 401) {
+          navigateTo('/login')
+        } else {
+          toast.add({title: 'Error', description: 'An error occurred: ' + error.response.status, color: 'error'})
+        }
+      },
+      onResponse: (context) => {
+        if (context.response.status === 200) {
+          toast.add({title: 'Success', description: 'Recipe successfully imported ', color: 'success'})
+          navigateTo('/')
+        }
+      }
     })
-    console.log(status.value)
-    if (error.value) {
-      toast.add({title: 'Error', description: 'An error occurred: ' + error.value, color: 'error'})
-    } else {
-      toast.add({title: 'Success', description: 'Recipe successfully imported', color: 'success'})
-      navigateTo('/')
-    }
   } else {
     toast.add({title: 'Error', description: 'Please enter a URL', color: 'error'})
   }
