@@ -1,22 +1,32 @@
 <script setup lang="ts">
+import {navigateTo} from "nuxt/app";
+import {awaitAsync} from "valibot";
+
 const open = ref(false)
 const toast = useToast()
-const props = defineProps({
-  id: Number
-})
 
-const deleteRecipe = () => {
-  const {error} = useFetch(`http://localhost:4000/api/recipe/${props.id}`, {
+const route = useRoute()
+const id = route.params.id
+
+const deleteRecipe = async () => {
+  await useFetch(`http://localhost:4000/api/recipe/${id}`, {
     method: 'delete',
     credentials: 'include',
     server: false,
+    onResponseError: (error) => {
+      if (error.response?.status === 401) {
+        navigateTo('/login')
+      } else {
+        toast.add({title: 'Error', description: 'An error occurred: ' + error.response.status, color: 'error'})
+      }
+    },
+    onResponse: (context) => {
+      if (context.response.status === 200) {
+        toast.add({title: 'Success', description: 'Recipe successfully deleted ', color: 'success'})
+        navigateTo('/')
+      }
+    }
   })
-  if (error.value) {
-    toast.add({title: 'Error', description: 'An error occurred: ' + error.value, color: 'error'})
-  } else {
-    toast.add({title: 'Success', description: 'Recipe successfully deleted', color: 'success'})
-    navigateTo('/dashboard')
-  }
 }
 </script>
 

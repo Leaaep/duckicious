@@ -8,7 +8,7 @@ export const AccountInsertSchema = createInsertSchema(accountSchema);
 
 export const authController = new Elysia({prefix: '/auth'})
     .use(jwtPlugin)
-    .post('/login', async ({status, body, jwt, cookie: { account }}) => {
+    .post('/login', async ({status, body, jwt, cookie: {account}}) => {
         try {
             const accountData = await getAccountByUsername(body.username)
             if (await Bun.password.verify(body.password, accountData.password, 'bcrypt')) {

@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import * as v from 'valibot'
 import type {FormSubmitEvent} from '@nuxt/ui'
+import {navigateTo} from "nuxt/app";
+
+definePageMeta({
+  layout: 'login'
+})
+
 
 const schema = v.object({
   username: v.pipe(v.string()),
@@ -16,19 +22,32 @@ const state = reactive({
 
 const toast = useToast()
 
-async function onSubmit(event: FormSubmitEvent<Schema>) {
+await useFetch('http://localhost:4000/api/recipe', {
+  method: 'get',
+  credentials: 'include',
+  server: false,
+  immediate: true,
+  onResponse: (context) => {
+    if (context.response?.status !== 401) {
+      navigateTo('/')
+    }
+  },
+})
 
+async function onSubmit(event: FormSubmitEvent<Schema>) {
   const {error} = await useFetch('http://localhost:4000/api/auth/login', {
     method: "POST",
     credentials: 'include',
-    body: state
+    body: state,
+    onResponseError: (error) => {
+      if (error.response?.status !== 401) {
+        navigateTo('/')
+      }
+      if (error.response?.status !== 200) {
+        toast.add({title: 'Error', description: 'An error occurred: ' + error.response.status, color: 'error'})
+      }
+    }
   })
-
-  if (error.value) {
-    toast.add({title: 'Error', description: 'An error occurred: ' + error.value, color: 'error'})
-  } else {
-    toast.add({title: 'Success', description: 'Successfully logged in', color: 'success'})
-  }
 }
 </script>
 

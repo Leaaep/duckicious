@@ -1,14 +1,9 @@
 <script setup lang="ts">
+import {navigateTo} from "nuxt/app";
+
 const open = ref(false)
 const seasonItems = ref(['spring', 'summer', 'autumn', 'winter'])
 const toast = useToast()
-
-watch(open, (newOpen) => {
-  console.log(newOpen)
-  if (!newOpen) {
-    reloadNuxtApp()
-  }
-})
 
 const title = ref<string>('')
 const description = ref<string>('')
@@ -18,6 +13,16 @@ const season = ref<string>('')
 const servings = ref<number>(0)
 const cookTime = ref<number>(0)
 
+const resetForm = () => {
+  title.value = ''
+  description.value = ''
+  ingredients.value = []
+  instructions.value = ''
+  season.value = 'spring'
+  servings.value = 0
+  cookTime.value = 0
+}
+
 const removeIngredient = (index: number) => {
   ingredients.value.splice(index, 1)
 }
@@ -26,8 +31,8 @@ const addIngredient = () => {
   ingredients.value.push('')
 }
 
-const save = () => {
-  const {error} = useFetch(`http://localhost:4000/api/recipe`, {
+const save = async () => {
+  await useFetch(`http://localhost:4000/api/recipe`, {
     method: 'post',
     credentials: 'include',
     server: false,
@@ -39,18 +44,30 @@ const save = () => {
       season: season,
       servings: servings,
       cookTime: cookTime
+    },
+    onResponseError: (error) => {
+      if (error.response?.status === 401) {
+        navigateTo('/login')
+      } else {
+        toast.add({title: 'Error', description: 'An error occurred: ' + error.response.status, color: 'error'})
+      }
+    },
+    onResponse: (context) => {
+      if (context.response.status === 201) {
+        toast.add({title: 'Success', description: 'Recipe successfully saved ', color: 'success'})
+        navigateTo('/')
+      }
     }
   })
-  if (error.value) {
-    toast.add({title: 'Error', description: 'An error occurred: ' + error.value, color: 'error'})
-  } else {
-    toast.add({title: 'Success', description: 'Recipe successfully created', color: 'success'})
-  }
 }
+
+watch(open, () => {
+  resetForm()
+})
 </script>
 
 <template>
-  <UModal v-model:open="open" title="Create Recipe" description="No duck recipes allowed!"
+  <UModal :onclose="resetForm" v-model:open="open" title="Create Recipe" description="No duck recipes allowed!"
           :ui="{ footer: 'justify-end' }"
           :dismissible="false"
   >

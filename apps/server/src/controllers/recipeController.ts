@@ -21,7 +21,7 @@ export const recipeController = new Elysia({prefix: '/recipe'})
             if (!accountData) {
                 return status(401, 'Unauthorized')
             }
-        },
+        }
     })
     .get('/:recipeID', async ({status, params: {recipeID}}) => {
         try {
@@ -34,7 +34,12 @@ export const recipeController = new Elysia({prefix: '/recipe'})
         params: t.Object({
             recipeID: t.Number()
         }),
-        auth: true
+        async beforeHandle({cookie: {account}, status, jwt}) {
+            const accountData = await jwt.verify(account.value)
+            if (!accountData) {
+                return status(401, 'Unauthorized')
+            }
+        }
     })
     .post('/', async ({status, body}) => {
         try {
@@ -44,7 +49,13 @@ export const recipeController = new Elysia({prefix: '/recipe'})
             return status(500, 'Internal Server Error: ' + e?.toString())
         }
     }, {
-        body: RecipeInsertSchema
+        body: RecipeInsertSchema,
+        async beforeHandle({cookie: {account}, status, jwt}) {
+            const accountData = await jwt.verify(account.value)
+            if (!accountData) {
+                return status(401, 'Unauthorized')
+            }
+        }
     })
     .put('/:recipeID', ({status, body}) => {
         try {
@@ -54,7 +65,13 @@ export const recipeController = new Elysia({prefix: '/recipe'})
             return status(500, 'Internal Server Error: ' + e?.toString())
         }
     }, {
-        body: RecipeInsertSchema
+        body: RecipeInsertSchema,
+        async beforeHandle({cookie: {account}, status, jwt}) {
+            const accountData = await jwt.verify(account.value)
+            if (!accountData) {
+                return status(401, 'Unauthorized')
+            }
+        }
     })
     .delete('/:recipeID', async ({status, params: {recipeID}}) => {
         try {
@@ -66,7 +83,13 @@ export const recipeController = new Elysia({prefix: '/recipe'})
     }, {
         params: t.Object({
             recipeID: t.Number()
-        })
+        }),
+        async beforeHandle({cookie: {account}, status, jwt}) {
+            const accountData = await jwt.verify(account.value)
+            if (!accountData) {
+                return status(401, 'Unauthorized')
+            }
+        }
     })
     .get('/import', async ({query: {url}, status}) => {
         try {
@@ -99,5 +122,11 @@ export const recipeController = new Elysia({prefix: '/recipe'})
     }, {
         query: t.ObjectString({
             url: t.String()
-        })
+        }),
+        async beforeHandle({cookie: {account}, status, jwt}) {
+            const accountData = await jwt.verify(account.value)
+            if (!accountData) {
+                return status(401, 'Unauthorized')
+            }
+        }
     })

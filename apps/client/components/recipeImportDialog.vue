@@ -14,7 +14,7 @@ const importRecipe = async () => {
       toast.add({title: 'Error', description: 'An error occurred: ' + error.value, color: 'error'})
     } else {
       toast.add({title: 'Success', description: 'Recipe successfully imported', color: 'success'})
-      navigateTo('/dashboard')
+      navigateTo('/')
     }
   } else {
     toast.add({title: 'Error', description: 'Please enter a URL', color: 'error'})

@@ -1,23 +1,25 @@
 <script setup lang="ts">
+import {navigateTo} from "nuxt/app";
+
 const toast = useToast()
 
 definePageMeta({
   layout: 'default'
 })
 
-const {data, error} = await useFetch('http://localhost:4000/api/recipe', {
+const {data} = await useFetch('http://localhost:4000/api/recipe', {
   method: 'get',
   credentials: 'include',
-  server: false
+  server: false,
+  onResponseError: (error) => {
+    if (error.response?.status === 401) {
+      navigateTo('/login')
+    } else {
+      toast.add({title: 'Error', description: 'An error occurred: ' + error.response.status, color: 'error'})
+    }
+  },
 })
 
-if (error.value) {
-  toast.add({
-    title: 'Error',
-    description: 'An error occurred: ' + error.value?.statusCode + ' ' + error.value?.statusMessage,
-    color: 'error'
-  })
-}
 </script>
 
 <template>
