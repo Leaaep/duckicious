@@ -69,7 +69,6 @@ const save = async () => {
     onResponse: (context) => {
       if (context.response.status === 200) {
         toast.add({title: 'Success', description: 'Recipe successfully saved ', color: 'success'})
-        reloadNuxtApp()
       }
     }
   })

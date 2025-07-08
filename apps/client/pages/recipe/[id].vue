@@ -27,29 +27,34 @@ const {data: recipe} = await useFetch(() => `http://localhost:4000/api/recipe/${
 </script>
 
 <template>
-  <UCard>
-    <template #header>
-      <EditRecipeDialog/>
-      <p class="text-3xl text-center">{{ recipe.title }}</p>
-      <p class="text-center">{{ recipe.description }}</p>
-    </template>
-    <template #default>
-      <UContainer class="flex flex-row justify-between">
-        <ul class="text-center">
-          <li :key="index" v-for="(ingredient, index) in recipe.ingredients">
-            {{ ingredient }}
-          </li>
-        </ul>
-
-        <p class="text-center">{{ recipe.instructions }}</p>
-      </UContainer>
-    </template>
-    <template #footer>
-      <UContainer class="flex flex-row justify-between">
-        <p class="text-gray-400">{{ 'Cook time: ' + recipe.cookTime }}</p>
-        <p class="text-gray-400">{{ 'Servings: ' + recipe.servings }}</p>
-        <p class="text-gray-400">{{ 'Season: ' + recipe.season }}</p>
-      </UContainer>
-    </template>
-  </UCard>
+  <div v-if="recipe">
+    <UCard>
+      <template #header>
+        <EditRecipeDialog />
+        <p class="text-3xl text-center">{{ recipe.title }}</p>
+        <p class="text-center">{{ recipe.description }}</p>
+      </template>
+      <template #default>
+        <UContainer class="flex flex-row justify-between">
+          <ul class="text-center">
+            <li :key="index" v-for="(ingredient, index) in recipe.ingredients">
+              {{ ingredient }}
+            </li>
+          </ul>
+          <p class="text-center">{{ recipe.instructions }}</p>
+        </UContainer>
+      </template>
+      <template #footer>
+        <UContainer class="flex flex-row justify-between">
+          <p class="text-gray-400">{{ 'Cook time: ' + recipe.cookTime }}</p>
+          <p class="text-gray-400">{{ 'Servings: ' + recipe.servings }}</p>
+          <p class="text-gray-400">{{ 'Season: ' + recipe.season }}</p>
+        </UContainer>
+      </template>
+    </UCard>
+  </div>
+  <div v-else class="text-center text-gray-400 p-10">
+    Loading recipe or recipe not found.
+  </div>
 </template>
+
