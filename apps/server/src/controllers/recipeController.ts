@@ -100,7 +100,7 @@ export const recipeController = new Elysia({prefix: '/recipe'})
             )
 
             if (!response.ok) {
-                return status(500, 'Internal Server Error: ' + response.status + ' ' + response.statusText)
+                return response
             }
             const data = await response.json()
 
@@ -108,7 +108,7 @@ export const recipeController = new Elysia({prefix: '/recipe'})
 
             const body = {
                 title: data.title,
-                description: data.summary,
+                description: '',
                 ingredients: ingredients,
                 instructions: data.instructions,
                 servings: data.servings,
