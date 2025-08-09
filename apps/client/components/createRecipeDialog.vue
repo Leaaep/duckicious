@@ -95,7 +95,7 @@ watch(open, () => {
           </UContainer>
         </UFormField>
         <UFormField label="Instructions">
-          <UInput v-model="instructions" placeholder="Instructions"></UInput>
+          <UTextarea v-model="instructions" placeholder="Instructions"></UTextarea>
         </UFormField>
         <UFormField label="Season">
           <USelect placeholder="Season" v-model="season" :items="seasonItems" class="w-48"/>

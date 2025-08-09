@@ -105,7 +105,7 @@ const save = async () => {
           </UContainer>
         </UFormField>
         <UFormField label="Instructions">
-          <UInput v-model="recipe.instructions" placeholder="Instructions"></UInput>
+          <UTextarea v-model="recipe.instructions" placeholder="Instructions"></UTextarea>
         </UFormField>
         <UFormField label="Season">
           <USelect placeholder="Season" v-model="recipe.season" :items="seasonItems" class="w-48"/>
